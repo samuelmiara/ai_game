@@ -43,16 +43,16 @@ class Honda:
         # Interpret network output
         if output[0] > 0.5 and self.y > 180:  # Move up
             self.y -= self.speed_y
-            genomes[index].fitness += 0.08
+            ge[index].fitness += 0.08
         if output[1] > 0.5 and self.y < 420:  # Move down
             self.y += self.speed_y
-            genomes[index].fitness += 0.08
+            ge[index].fitness += 0.08
         if output[2] > 0.5 and self.x < WIDTH - 60:  # Move right
             self.x += self.speed_y
-            genomes[index].fitness += 0.03
+            ge[index].fitness += 0.03
         if output[3] > 0.5 and self.x > 0:  # Move left
             self.x -= self.speed_y
-            genomes[index].fitness += 0.05
+            ge[index].fitness += 0.05
 
     def get_rect(self):
         return pygame.Rect(self.x, self.y, 90, 30)
@@ -92,7 +92,7 @@ def create_object_if_needed(objects, global_speed):
         objects.append(GameObject(new_x, new_y, object_speed))
 
 
-def check_collision(honda, objects, index, genomes):
+def check_collision(honda, objects, index, ge):
     honda_rect = honda.get_rect()
     for obj in objects:
         if honda_rect.colliderect(obj.get_rect()):
@@ -128,17 +128,18 @@ def check_proximity(objects):
 
 
 def eval_genomes(genomes, config):
-    global global_speed, hondas, objects, nets
+    global global_speed, hondas,ge, objects, nets
     objects = []
     global_speed = 0.5
     hondas = []
+    ge = []
     nets = []
 
     # Initialize the population and neural networks
     for genome_id, genome in genomes:
         honda = Honda(100, HEIGHT // 2, 5)
         hondas.append(honda)
-        genomes.append(genome)
+        ge.append(genome)
         net = neat.nn.FeedForwardNetwork.create(genome, config)
         nets.append(net)
         genome.fitness = 0  # Initial fitness
@@ -164,14 +165,14 @@ def eval_genomes(genomes, config):
             inputs = [honda.x, honda.y] + all_object_positions_and_speeds
             output = nets[i].activate(inputs)
             honda.move(output, i)  # Pass the index i to the move method
-            genomes[i].fitness += 0.1  # Reward for survival
+            ge[i].fitness += 0.1  # Reward for survival
 
             # Check for collision
-            if check_collision(honda, objects, i, genomes):
-                genomes[i].fitness -= 10  # Penalty for collision
+            if check_collision(honda, objects, i, ge):
+                ge[i].fitness -= 10  # Penalty for collision
                 hondas.pop(i)
                 nets.pop(i)
-                genomes.pop(i)
+                ge.pop(i)
 
         screen.blit(map_image, (0, 0))
         for honda in hondas:
@@ -192,7 +193,7 @@ def eval_genomes(genomes, config):
         # Write only for active genomes
         with open(results_file, mode='a', newline='') as file:
             writer = csv.writer(file)
-            for j, genome in enumerate(genomes):
+            for j, genome in enumerate(ge):
                 writer.writerow([genome.key, genome.fitness, global_speed])
 
 
