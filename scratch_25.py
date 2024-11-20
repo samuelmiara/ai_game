@@ -23,13 +23,13 @@ WIDTH, HEIGHT = screen.get_size()
 font = pygame.font.Font(None, 36)
 
 # Loading images
-map_image = pygame.image.load("path/to/map_image.jpg")
+map_image = pygame.image.load("map_image.jpg")
 map_image = pygame.transform.scale(map_image, (1400, 600))
 
-honda_image = pygame.image.load("path/to/honda_image.png")
+honda_image = pygame.image.load("honda_image.png")
 honda_image = pygame.transform.scale(honda_image, (90, 30))
 
-object_image = pygame.image.load("path/to/object_image.png")
+object_image = pygame.image.load("object_image.png")
 object_image = pygame.transform.scale(object_image, (100, 40))
 
 # Honda class definition
@@ -210,5 +210,5 @@ def run(config_path):
 
 if __name__ == '__main__':
     local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, "path/to/config.txt")
+    config_path = os.path.join(local_dir, "config.txt")
     run(config_path)
